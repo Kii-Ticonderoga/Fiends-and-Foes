@@ -1,8 +1,10 @@
 //  ***********************************
 // Imports
 //  ***********************************
-
-var app = require('express')();
+const express = require('express')
+const path = require('path')
+var app = express(path.join(__dirname, '..', 'build');
+app.use(express.static())
 const port = process.env.PORT || 3001;
 const server = app.listen(port)
 var io = require('socket.io')(server);

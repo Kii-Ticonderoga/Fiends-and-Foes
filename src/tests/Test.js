@@ -16,7 +16,7 @@ const PAGE_HEIGHT = window.innerHeight * 9/10
 class Test extends Component {
   constructor(){
     super()
-    this.socket = io.connect('http://localhost:3001')
+    this.socket = io.connect('https://fiendsandfoes.herokuapp.com')
     this.fiend = new FiendPlayer(this.socket)
     this.stage =''
     this.konvaObj =[]
