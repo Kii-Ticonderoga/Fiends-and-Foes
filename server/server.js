@@ -18,11 +18,6 @@ const GameState = require('./gameFunctions/gameState')
 const state = new GameState();
 
 
-const mongoose = require('mongoose')
-const User = require('./models/UserModel')
-
-
-
 //    --- Define what port we will have the sockets listening on
 
 // ***********************************

@@ -5,6 +5,7 @@ import Konva from 'konva'
 import React, { Component } from 'react';
 import io from "socket.io-client"
 import FiendPlayer from './fiendPlayer'
+import _ from 'lodash';
 
 const PAGE_WIDTH = window.innerWidth * 5/6
 const PAGE_HEIGHT = window.innerHeight * 9/10
@@ -18,8 +19,8 @@ class Test extends Component {
     super()
     this.socket = io.connect('https://fiendsandfoes.herokuapp.com')
     this.fiend = new FiendPlayer(this.socket)
-    this.stage =''
-    this.konvaObj =[]
+    this.stage = ''
+    this.konvaObj = []
     this.konvaLayers = []
     this.playerText = new Konva.Text({
       x: window.innerWidth *5/6 + 5,
@@ -35,32 +36,17 @@ class Test extends Component {
   getRandomInt(min, max){
     return Math.floor(Math.random() * (max - min)) + min
   }
+
   getRandomColor(){
     return ["red","blue","yellow","green","orange","black","purple"][Math.round(Math.random() * 6)]
   }
 
-//   addPlayerButton(){ // for button
-// //    --- Updates our array of players in the data object
-//     if(this.input && isNaN(this.input)){
-//       var initX = this.getRandomInt(0, PAGE_WIDTH)
-//       var initY = this.getRandomInt(0, PAGE_HEIGHT)
-//       this.fiend.gameData.players.push({
-//         x:initX,
-//         y:initY,
-//         name:this.input
-//       })
-//       console.log("Added user, the gameData now is ", this.fiend.gameData)
-//       this.socket.emit('sync', this.fiend.gameData)
-//       console.log("Synced new user")
-//     }
-//
-//   }
-
   mapGen(){
-		var mapLayer = new Konva.Layer();
+
+		this.mapLayer = new Konva.Layer();
     this.topTenLayer = new Konva.Layer();
 
-		var circleMap = new Konva.Rect({
+		this.circleMap = new Konva.Rect({
 			x:0,
 			y:0,
       width:PAGE_WIDTH,
@@ -70,33 +56,49 @@ class Test extends Component {
 			stokeWidth: 5
 		})
 
-		mapLayer.add(circleMap);
+		this.mapLayer.add(this.circleMap);
     this.topTenLayer.add(this.playerText);
-		this.stage.add(mapLayer);
+		this.stage.add(this.mapLayer);
     this.stage.add(this.topTenLayer);
     //this.stage.add(this.genFoodLayer());
     var laserLayer = new Konva.Layer();
-    var laser = ""
+    var laser = "";
 
     this.fiend.konvaLayers.forEach((layer)=> {
       this.stage.add(layer)
     })
-    console.log(this.fiend.playerObj)
-    Object.values(this.fiend.playerObj).map((player) => {
-      if (player.isLocal){
-        this.mouseControls(circleMap, laserLayer, player)
+
+    this.circleMap.on("mousemove", () => {
+      console.log("playerObj ",this.fiend.playerObj)
+      const player =  _.get(this,`fiend.playerObj[${this.socket.id}].user`);
+      console.log("Trying to find ID ",player)
+      if(player){
+        var mousePos = this.stage.getPointerPosition();
+        //var obj = Object.values(this.fiend.playerObj)
+        //console.log("obj",obj)
+        this.fiend.setPos(mousePos.x, mousePos.y, player)
       }
     })
 
 	}
 
-  mouseControls(circleMap, laserLayer, player){
-    var self = this
-    var laser = ""
-    circleMap.on("mousemove", function(){
-      var mousePos = self.stage.getPointerPosition();
-      this.fiend.setPos(mousePos.x, mousePos.y, player)
-    })
+  // assignControls(){
+  //   console.log("fiend obj: ",this.fiend.playerObj)
+  //   var laserLayer = new Konva.Layer();
+  //   var laser = ""
+  //   Object.values(this.fiend.playerObj).map((player) => {
+  //     console.log("ASDF player: ", player)
+  //     if (player.id === this.socket.id){
+  //       console.log("Tim told me to ", this.socket.id)
+  //       this.mouseControls(this.circleMap, laserLayer, player)
+  //     }
+  //   })
+  // }
+  //
+  // mouseControls(circleMap, laserLayer, player){
+  //   var self = this
+  //   var laser = ""
+  //   )
 
     /**************************************************************************
     add these functions in da futur
@@ -141,16 +143,11 @@ class Test extends Component {
     //   console.log("children destroyed ", laserLayer.destroyChildren())
     // })
 
-  }
+  //}
 
   getRandomInt(min, max){
     return Math.floor(Math.random() * (max - min)) + min;
   }
-
-  // removePlayerButton(){
-  //   this.fiend.gameData.players.splice(this.input, 1)
-  //   console.log("removed player, the gameData now is ", this.fiend.gameData)
-  // }
 
   componentDidMount(){
 
@@ -161,12 +158,6 @@ class Test extends Component {
     })
 
     window.addEventListener("beforeunload", () =>{
-
-      // Object.values(this.fiend.playerObj).forEach((obj)=> {
-      //   if(obj.isLocal){
-      //     player = obj
-      //   }
-      // })
       this.socket.emit("leaveGame", this.socket.id)
     })
 
@@ -182,7 +173,7 @@ class Test extends Component {
       })
 
       this.socket.on('update', (newData) => {
-        console.log('IT\'S NEW DATA', newData)
+        //console.log('IT\'S NEW DATA', newData)
         this.fiend.draw(newData, this.stage)
       })
 

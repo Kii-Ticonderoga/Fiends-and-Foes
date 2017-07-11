@@ -14,10 +14,6 @@ export default class FiendPlayer{
     this.socket = this.socket
   }
 
-  removeKonva(){
-
-  }
-
   addKonva = (stage, player) => {
     var {x,y} = player
     player.user = new Konva.Circle({
@@ -87,8 +83,10 @@ export default class FiendPlayer{
 	}
 
 	setPos(x, y, player){
+    var playerX = player.getX()
+    var playerY = player.getY()
 	   var anim = new Konva.Animation((frame) => {
-      const { xVector, yVector } = this.vector(x, y, player.getX(), player.getY())
+      const { xVector, yVector } = this.vector(x, y, playerX, playerY)
 			 player.setX(xVector)
 			 player.setY(yVector)
      }, this.konvaLayers);
