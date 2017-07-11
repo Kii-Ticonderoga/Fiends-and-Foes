@@ -6,6 +6,12 @@ const path = require('path')
 var app = express();
 app.use(express.static(path.join(__dirname, '..', 'build')))
 const port = process.env.PORT || 3001;
+
+app.get('/*', function (req, res) {
+   res.sendFile(path.join(__dirname, 'build', 'index.html'));
+});
+
+
 const server = app.listen(port)
 var io = require('socket.io')(server);
 const GameState = require('./gameFunctions/gameState')
