@@ -49,7 +49,7 @@ class GameState {
 
   toJS(){
     return {
-      players : Object.values(this.players),
+      players : Object.keys(this.players).map(key => this.players[key]),
       food : this.food,
       lasers : this.lasers
     }
