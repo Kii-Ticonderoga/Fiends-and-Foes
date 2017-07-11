@@ -3,8 +3,8 @@
 //  ***********************************
 const express = require('express')
 const path = require('path')
-var app = express(path.join(__dirname, '..', 'build');
-app.use(express.static())
+var app = express();
+app.use(express.static(path.join(__dirname, '..', 'build')))
 const port = process.env.PORT || 3001;
 const server = app.listen(port)
 var io = require('socket.io')(server);
@@ -14,22 +14,6 @@ const state = new GameState();
 
 const mongoose = require('mongoose')
 const User = require('./models/UserModel')
-
-//  ***********************************
-//	Connecting to Mongo database
-//  ***********************************
-
-mongoose.connect('mongodb://localhost:27017/fiends_and_foes')
-var db = mongoose.connection
-db.on('error', ()=> {console.log( '---FAILED to connect to mongoose')})
-db.once('open', () => {
-	console.log( '+++Connected to mongoose')
-})
-
-//  ***********************************
-//  Defining Global variables
-//  ***********************************
-
 
 
 
