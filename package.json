@@ -2,7 +2,6 @@
   "name": "test-fiendsandfoes",
   "version": "0.1.0",
   "private": true,
-  "proxy": "http://localhost:3001/",
   "dependencies": {
     "express": "^4.15.3",
     "http": "0.0.0",
