@@ -1,5 +1,6 @@
 //import io from 'socket.io-client'
-import Konva from 'konva'
+import Konva from 'konva';
+import _ from 'lodash';
 
 
 export default class FiendPlayer{
@@ -66,14 +67,16 @@ export default class FiendPlayer{
 		return player.getRadius()
 	}
 
-	setPos(x, y, player){
-    var playerX = player.getX()
-    var playerY = player.getY()
-	   var anim = new Konva.Animation((frame) => {
-			 player.setX(x)
-			 player.setY(y)
-     }, this.konvaLayers);
-	   anim.start()
+	setPos(x, y, id){
+    var playerKonva = _.get(this, `playerObj[${id}].user`);
+    if(playerKonva){
+      console.log('setting position', x,y,id,)
+  	   var anim = new Konva.Animation((frame) => {
+  			 playerKonva.setX(x)
+  			 playerKonva.setY(y)
+       }, this.konvaLayers.map(({konvaLayer}) => konvaLayer));
+  	   anim.start()
+   }
 	}
 
   addPlayer(player){
@@ -87,15 +90,10 @@ export default class FiendPlayer{
   }
 
   destroyPlayer(player){
-    console.log("Destrot player ", player)
     var {id} = player
-    console.log("Array of konva Layers, ",this.konvaLayers)
     this.konvaLayers.forEach( (layer) => {
-      console.log("looping layers :", layer)
       if (layer.id === id ){
-        console.log("if ran")
         layer.konvaLayer.destroyChildren()
-        console.log("children destroyed ", layer.konvaLayer.destroy() )
       }
     })
   }

@@ -51,6 +51,7 @@ io.on('connection', function (socket) {
 
     socket.on("mouseMove", (mouseData) => {
       state.updateMousePos(mouseData)
+      console.log('cheese', mouseData)
       state.updatePlayer(mouseData.id)
     })
 
@@ -63,7 +64,7 @@ io.on('connection', function (socket) {
 //		---gameData is an object with arrays for values
 
 	socket.emit("firstupdate", state.toJS())
-	setInterval(()=>io.emit('update', state.toJS()), 1000)
+	setInterval(()=>io.emit('update', state.toJS()), 10)
 
 	socket.on('sync', (gameData) => {
 

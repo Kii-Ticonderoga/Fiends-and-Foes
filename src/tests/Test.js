@@ -74,12 +74,10 @@ class Test extends Component {
     this.circleMap.on("mousemove", () => {
       const player =  _.get(this,`fiend.playerObj[${this.socket.id}].user`);
       if(player){
-        console.log("if ran")
 
         var mouse = this.stage.getPointerPosition();
-         console.log("Tim is a smart guy ", mouse)
 
-        this.socket.emit("mouseMove", {id: this.localID, x: mouse.x, y: mouse.y})
+        this.socket.emit("mouseMove", {id: this.socket.id, x: mouse.x, y: mouse.y})
 
       }
     })
@@ -156,22 +154,17 @@ class Test extends Component {
         this.fiend.localID = this.socket.id
 
         this.socket.emit("joinGame", {x: 0, y: 0, id: this.fiend.localID})
-        console.log("Tim is a rock climber ", newData)
         this.fiend.gameData = newData
         this.fiend.draw(newData, this.stage)
-        console.log("data ", newData)
       })
 
       this.socket.on('update', (newData) => {
-        console.log("Testing 123 lauren is a bully", newData)
-        //console.log('IT\'S NEW DATA', newData)
-        console.log("Austin is a streamer ", this.fiend.localID)
-        var {x, y} = newData.mousePos[this.fiend.localID]
-        var player = newData.players.filter(player => player.id == this.fiend.localID)
-                                    .reduce(player, next => player).user
-        console.log("plauer: ", player)
+        this.fiend.gameData = newData
+        var {x, y} = this.fiend.gameData.mousePos[this.socket.id] || {x:0, y:0}
+        // var player = newData.players.filter(player => player.id == this.fiend.localID)
+        // console.log("plauer: ", player)
         this.fiend.draw(newData, this.stage)
-        this.fiend.setPos(x,y,player)
+        this.fiend.setPos(x,y,this.socket.id)
       })
 
       this.socket.on("addPlayer", (playerData) =>{
@@ -195,7 +188,6 @@ class Test extends Component {
 
 
   render(){
-    console.log("Render run")
     return(
       <div id="container"></div>
     )
