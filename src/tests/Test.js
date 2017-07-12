@@ -17,9 +17,12 @@ const PAGE_HEIGHT = window.innerHeight * 9/10
 class Test extends Component {
   constructor(){
     super()
-    this.socket = io.connect('https://fiendsandfoes.herokuapp.com')
+    const socketServer = process.env.NODE_ENV === 'development' ? 'http://localhost:3001' : 'https://fiendsandfoes.herokuapp.com';
+    console.log('Connecting to', socketServer)
+    this.socket = io.connect(socketServer)
     this.fiend = new FiendPlayer(this.socket)
     this.stage = ''
+    this.localID =''
     this.konvaObj = []
     this.konvaLayers = []
     this.playerText = new Konva.Text({
@@ -69,36 +72,19 @@ class Test extends Component {
     })
 
     this.circleMap.on("mousemove", () => {
-      console.log("playerObj ",this.fiend.playerObj)
       const player =  _.get(this,`fiend.playerObj[${this.socket.id}].user`);
-      console.log("Trying to find ID ",player)
       if(player){
-        var mousePos = this.stage.getPointerPosition();
-        //var obj = Object.values(this.fiend.playerObj)
-        //console.log("obj",obj)
-        this.fiend.setPos(mousePos.x, mousePos.y, player)
+        console.log("if ran")
+
+        var mouse = this.stage.getPointerPosition();
+         console.log("Tim is a smart guy ", mouse)
+
+        this.socket.emit("mouseMove", {id: this.localID, x: mouse.x, y: mouse.y})
+
       }
     })
 
 	}
-
-  // assignControls(){
-  //   console.log("fiend obj: ",this.fiend.playerObj)
-  //   var laserLayer = new Konva.Layer();
-  //   var laser = ""
-  //   Object.values(this.fiend.playerObj).map((player) => {
-  //     console.log("ASDF player: ", player)
-  //     if (player.id === this.socket.id){
-  //       console.log("Tim told me to ", this.socket.id)
-  //       this.mouseControls(this.circleMap, laserLayer, player)
-  //     }
-  //   })
-  // }
-  //
-  // mouseControls(circleMap, laserLayer, player){
-  //   var self = this
-  //   var laser = ""
-  //   )
 
     /**************************************************************************
     add these functions in da futur
@@ -164,17 +150,28 @@ class Test extends Component {
     this.mapGen()
 
     this.socket.on('connect', ()=>{
-      console.log('connected', this.socket)
-      this.socket.on("firstupdate", (newData) => {
+      console.log('connected', this.socket, this.socket.id)
 
-        this.socket.emit("joinGame", {})
+      this.socket.on("firstupdate", (newData) => {
+        this.fiend.localID = this.socket.id
+
+        this.socket.emit("joinGame", {x: 0, y: 0, id: this.fiend.localID})
+        console.log("Tim is a rock climber ", newData)
         this.fiend.gameData = newData
         this.fiend.draw(newData, this.stage)
+        console.log("data ", newData)
       })
 
       this.socket.on('update', (newData) => {
+        console.log("Testing 123 lauren is a bully", newData)
         //console.log('IT\'S NEW DATA', newData)
+        console.log("Austin is a streamer ", this.fiend.localID)
+        var {x, y} = newData.mousePos[this.fiend.localID]
+        var player = newData.players.filter(player => player.id == this.fiend.localID)
+                                    .reduce(player, next => player).user
+        console.log("plauer: ", player)
         this.fiend.draw(newData, this.stage)
+        this.fiend.setPos(x,y,player)
       })
 
       this.socket.on("addPlayer", (playerData) =>{
