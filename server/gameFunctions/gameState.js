@@ -55,7 +55,7 @@ class GameState {
 
   updateMousePosBroad(){
 
-    var mousePosArr = Object.keys(this.mousePos).map( key => this.mousePos[key])
+    var mousePosArr = Object.keys(this.mousePos).map( key => this.mousePos[key])  
     console.log("Mouse pos Array: ", mousePosArr)
     console.log("mouse pre non-local: ",this.mousePos)
 

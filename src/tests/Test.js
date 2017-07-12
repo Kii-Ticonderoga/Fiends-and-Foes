@@ -160,11 +160,16 @@ class Test extends Component {
 
       this.socket.on('update', (newData) => {
         this.fiend.gameData = newData
-        var {x, y} = this.fiend.gameData.mousePos[this.socket.id] || {x:0, y:0}
         // var player = newData.players.filter(player => player.id == this.fiend.localID)
         // console.log("plauer: ", player)
         this.fiend.draw(newData, this.stage)
-        this.fiend.setPos(x,y,this.socket.id)
+        const ids = Object.keys(this.fiend.gameData.players)
+        ids.map(id => {
+          var {x, y} = this.fiend.gameData.mousePos[id] || {x:0, y:0}
+
+          this.fiend.setPos(x,y,id)
+        })
+
         // Object.keys(this.fiend.mousePos).map( id => {
         //   this.fiend.setPos
         // })
