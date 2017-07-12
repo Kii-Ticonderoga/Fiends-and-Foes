@@ -38,7 +38,7 @@ class GameState {
   // ***********************************
   //  Mice
   // ***********************************
-  updateMousePos(mouseObj){
+  updateMousePosLocal(mouseObj){
     console.log("mouse pre ", this.mousePos)
     if(this.mousePos[mouseObj.id]){
       this.mousePos[mouseObj.id].x = mouseObj.x
@@ -51,6 +51,20 @@ class GameState {
       }
     }
     console.log("mouse post ", this.mousePos)
+  }
+
+  updateMousePosBroad(){
+
+    var mousePosArr = Object.values(this.mousePos)
+    console.log("Mouse pos Array: ", mousePosArr)
+    console.log("mouse pre non-local: ",this.mousePos)
+
+    mousePosArr.map( obj =>{
+      var id = obj.id
+      this.mousePos[id].x = obj.x
+      this.mousePos[id].y = obj.y
+    })
+    console.log("mouse post non-local: ",this.mousePos)
   }
 
   removeMousePos(mouseID){

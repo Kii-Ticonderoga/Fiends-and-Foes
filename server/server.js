@@ -50,9 +50,10 @@ io.on('connection', function (socket) {
 		})
 
     socket.on("mouseMove", (mouseData) => {
-      state.updateMousePos(mouseData)
+      state.updateMousePosLocal(mouseData)
       console.log('cheese', mouseData)
       state.updatePlayer(mouseData.id)
+      state.updateMousePosBroad()
     })
 
 	socket.on('shoot', (laser) => {
