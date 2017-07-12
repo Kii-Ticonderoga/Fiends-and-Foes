@@ -38,7 +38,7 @@ var connections = [];
 
 //    ---Logging connections, and adding socket to connections array
 io.on('connection', function (socket) {
-
+  console.log("Connection established")
 	connections.push(socket)
 
 	socket.on('joinGame', function(){
@@ -58,8 +58,14 @@ io.on('connection', function (socket) {
 			socket.emit('removePlayer', state.getPlayer(playerId))
 			socket.broadcast.emit('removePlayer', state.getPlayer(playerId))
 			state.removePlayer(playerId)
+      state.removeMousePos(playerId)
 
 		})
+
+    socket.on("mouseMove", (mouseData) => {
+      state.updateMousePos(mouseData)
+      state.updatePlayer(mouseData.id)
+    })
 
 	socket.on('shoot', (laser) => {
      var laser = new Laser(laser.id, laser.xStart, laser.yStart, laser.xEnd, laser.yEnd);

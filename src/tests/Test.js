@@ -17,9 +17,10 @@ const PAGE_HEIGHT = window.innerHeight * 9/10
 class Test extends Component {
   constructor(){
     super()
-    this.socket = io.connect('https://fiendsandfoes.herokuapp.com')
+    this.socket = io.connect(process.env.SOCKET_SERVER || 'https://fiendsandfoes.herokuapp.com')
     this.fiend = new FiendPlayer(this.socket)
     this.stage = ''
+    this.localID =''
     this.konvaObj = []
     this.konvaLayers = []
     this.playerText = new Konva.Text({
@@ -69,36 +70,18 @@ class Test extends Component {
     })
 
     this.circleMap.on("mousemove", () => {
-      console.log("playerObj ",this.fiend.playerObj)
       const player =  _.get(this,`fiend.playerObj[${this.socket.id}].user`);
-      console.log("Trying to find ID ",player)
       if(player){
+        console.log("if ran")
+
         var mousePos = this.stage.getPointerPosition();
-        //var obj = Object.values(this.fiend.playerObj)
-        //console.log("obj",obj)
-        this.fiend.setPos(mousePos.x, mousePos.y, player)
+
+        this.socket.emit("mouseMove", {id: this.localID, x: mousePos.x, y: mousePos.y})
+
       }
     })
 
 	}
-
-  // assignControls(){
-  //   console.log("fiend obj: ",this.fiend.playerObj)
-  //   var laserLayer = new Konva.Layer();
-  //   var laser = ""
-  //   Object.values(this.fiend.playerObj).map((player) => {
-  //     console.log("ASDF player: ", player)
-  //     if (player.id === this.socket.id){
-  //       console.log("Tim told me to ", this.socket.id)
-  //       this.mouseControls(this.circleMap, laserLayer, player)
-  //     }
-  //   })
-  // }
-  //
-  // mouseControls(circleMap, laserLayer, player){
-  //   var self = this
-  //   var laser = ""
-  //   )
 
     /**************************************************************************
     add these functions in da futur
@@ -164,17 +147,24 @@ class Test extends Component {
     this.mapGen()
 
     this.socket.on('connect', ()=>{
-      console.log('connected', this.socket)
+      console.log('connected', this.socket, this.socket.id)
+
       this.socket.on("firstupdate", (newData) => {
 
         this.socket.emit("joinGame", {})
         this.fiend.gameData = newData
         this.fiend.draw(newData, this.stage)
+        this.fiend.localID = this.socket.id
       })
 
       this.socket.on('update', (newData) => {
+        console.log("Testing 123 lauren is a bully", newData)
         //console.log('IT\'S NEW DATA', newData)
+        var {x, y} = newData.mousePos[this.localID]
+        var player = newData.players.filter(player => player.id == this.locaID)[0].user
+        console.log("plauer: ", player)
         this.fiend.draw(newData, this.stage)
+        this.fiend.setPos(x,y,player)
       })
 
       this.socket.on("addPlayer", (playerData) =>{

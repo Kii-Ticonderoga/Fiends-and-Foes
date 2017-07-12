@@ -7,36 +7,79 @@ const EAT_RADIUS = 3
 class GameState {
   constructor(){
     this.players = {}
-    this.food = []
-    this.lasers = []
-    setInterval(this.addRandomFood.bind(this), FOOD_INTERVAL)
+    this.lasers = {}
+    this.mousePos = {}
+
   }
+// ***********************************
+//  Math Functions
+// ***********************************
 
   getRandomInt(min, max){
     return Math.floor(Math.random() * (max - min)) + min;
   }
 
+  vector(mouseX, mouseY, playerX, playerY){
+		let x = mouseX - playerX ;
+		let y = mouseY  - playerY ;
+		const vecLen = Math.sqrt(Math.pow(x, 2) + Math.pow(y,2))
+		x = x / vecLen * 10;
+		y = y / vecLen * 10;
+		return {xVector : playerX + x, yVector: playerY + y}
+	}
+// ***********************************
+//  Adds, updates, gets, and removes
+// ***********************************
 
-  addRandomFood(){
-    this.food.push({
-      x: this.getRandomInt(0, BOARD_WIDTH),
-      y: this.getRandomInt(0, BOARD_HEIGHT)
-    })
+
+// ***********************************
+//  Mice
+// ***********************************
+
+  addMousePos(id){
+    this.mousePos[id] ={
+      id: id,
+      x: null,
+      y: null
+    }
   }
 
-
-
-  eatFood(eatX, eatY){
-    const uneaten = this.food.filter(({x,y}) => x < (eatX + EAT_RADIUS) || x > (eatX - EAT_RADIUS) )
-    const eaten = this.food.length - this.uneaten.length
-    this.food = uneaten
-    return eaten
+  updateMousePos(mouseObj){
+    if(mousePos[mouseObj.id]){
+      this.mousePos[mouseObj.id].x = mouseObj.x
+      this.mousePos[mouseObj.id].y = mouseObj.y
+    }else{
+      this.mousePos[mouseObj.id] = {
+        id: mouseObj.id,
+        x: mouseObj.x,
+        y: mouseObj.y
+      }
+    }
   }
+
+  removeMousePos(mouseID){
+    delete this.mousePos[mouseID]
+  }
+
+  getMousePos(mouseID){
+    return this.mousePos[mouseID]
+  }
+
+// ***********************************
+// Players
+// ***********************************
 
   addPlayer(id){
     var initX = this.getRandomInt(40, Math.floor(BOARD_WIDTH * .90));
     var initY = this.getRandomInt(40, Math.floor(BOARD_WIDTH * .90));
     this.players[id] = {id: id, x: initX, y: initY, isAlive: true}
+  }
+  updatePlayer(id){
+    var {mouseX, mouseY} = this.getMousePos(id)
+    var {playerX, playerY} = this.getPlayer(id)
+    var {xVector, yVector} = this.vector(mouseX, mouseY, playerX, playerY)
+    this.players[id].x = xVector
+    this.players[id].y = yVector
   }
 
   getPlayer(id){
@@ -49,8 +92,8 @@ class GameState {
 
   toJS(){
     return {
-      players : Object.keys(this.players).map(key => this.players[key]),
-      food : this.food,
+      players : Object.keys(this.players).map( key => this.players[key]),
+      mousePos: this.mousePos,
       lasers : this.lasers
     }
   }
