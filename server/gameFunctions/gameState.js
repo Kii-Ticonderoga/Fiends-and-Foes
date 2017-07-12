@@ -39,6 +39,7 @@ class GameState {
   //  Mice
   // ***********************************
   updateMousePos(mouseObj){
+    console.log("mouse pre ", this.mousePos)
     if(this.mousePos[mouseObj.id]){
       this.mousePos[mouseObj.id].x = mouseObj.x
       this.mousePos[mouseObj.id].y = mouseObj.y
@@ -49,6 +50,7 @@ class GameState {
         y: mouseObj.y
       }
     }
+    console.log("mouse post ", this.mousePos)
   }
 
   removeMousePos(mouseID){
