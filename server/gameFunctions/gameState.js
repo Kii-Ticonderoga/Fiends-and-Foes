@@ -35,17 +35,8 @@ class GameState {
 // ***********************************
 //  Mice
 // ***********************************
-
-  addMousePos(id){
-    this.mousePos[id] ={
-      id: id,
-      x: null,
-      y: null
-    }
-  }
-
   updateMousePos(mouseObj){
-    if(mousePos[mouseObj.id]){
+    if(this.mousePos[mouseObj.id]){
       this.mousePos[mouseObj.id].x = mouseObj.x
       this.mousePos[mouseObj.id].y = mouseObj.y
     }else{

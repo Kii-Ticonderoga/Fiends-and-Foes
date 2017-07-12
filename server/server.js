@@ -41,9 +41,10 @@ io.on('connection', function (socket) {
   console.log("Connection established")
 	connections.push(socket)
 
-	socket.on('joinGame', function(){
-		console.log("joined game")
+	socket.on('joinGame', function(mouse){
+		 console.log("joined game")
      state.addPlayer(socket.id)
+     state.updateMousePos(mouse)
      io.emit('addPlayer', state.getPlayer(socket.id));
    })
 

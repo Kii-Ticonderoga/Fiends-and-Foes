@@ -17,7 +17,9 @@ const PAGE_HEIGHT = window.innerHeight * 9/10
 class Test extends Component {
   constructor(){
     super()
-    this.socket = io.connect(process.env.SOCKET_SERVER || 'https://fiendsandfoes.herokuapp.com')
+    const socketServer = process.env.NODE_ENV === 'development' ? 'http://localhost:3001' : 'https://fiendsandfoes.herokuapp.com';
+    console.log('Connecting to', socketServer)
+    this.socket = io.connect(socketServer)
     this.fiend = new FiendPlayer(this.socket)
     this.stage = ''
     this.localID =''
@@ -74,9 +76,10 @@ class Test extends Component {
       if(player){
         console.log("if ran")
 
-        var mousePos = this.stage.getPointerPosition();
+        var mouse = this.stage.getPointerPosition();
+         console.log("Tim is a smart guy ", mouse)
 
-        this.socket.emit("mouseMove", {id: this.localID, x: mousePos.x, y: mousePos.y})
+        this.socket.emit("mouseMove", {id: this.localID, x: mouse.x, y: mouse.y})
 
       }
     })
@@ -150,18 +153,22 @@ class Test extends Component {
       console.log('connected', this.socket, this.socket.id)
 
       this.socket.on("firstupdate", (newData) => {
+        this.fiend.localID = this.socket.id
 
-        this.socket.emit("joinGame", {})
+        this.socket.emit("joinGame", {x: 0, y: 0, id: this.fiend.localID})
+        console.log("Tim is a rock climber ", newData)
         this.fiend.gameData = newData
         this.fiend.draw(newData, this.stage)
-        this.fiend.localID = this.socket.id
+        console.log("data ", newData)
       })
 
       this.socket.on('update', (newData) => {
         console.log("Testing 123 lauren is a bully", newData)
         //console.log('IT\'S NEW DATA', newData)
-        var {x, y} = newData.mousePos[this.localID]
-        var player = newData.players.filter(player => player.id == this.locaID)[0].user
+        console.log("Austin is a streamer ", this.fiend.localID)
+        var {x, y} = newData.mousePos[this.fiend.localID]
+        var player = newData.players.filter(player => player.id == this.fiend.localID)
+                                    .reduce(player, next => player).user
         console.log("plauer: ", player)
         this.fiend.draw(newData, this.stage)
         this.fiend.setPos(x,y,player)
