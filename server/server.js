@@ -6,7 +6,7 @@ const path = require('path')
 var app = express();
 app.use(express.static(path.join(__dirname, '..', 'build')))
 const port = process.env.PORT || 3001;
-
+const RENDER_INTERVAL = 100
 app.get('/*', function (req, res) {
    res.sendFile(path.join(__dirname, '..','build', 'index.html'));
 });
@@ -65,7 +65,7 @@ io.on('connection', function (socket) {
 //		---gameData is an object with arrays for values
 
 	socket.emit("firstupdate", state.toJS())
-	setInterval(()=>io.emit('update', state.toJS()), 1000)
+	setInterval(()=>io.emit('update', state.toJS()), RENDER_INTERVAL)
 
 	socket.on('sync', (gameData) => {
 

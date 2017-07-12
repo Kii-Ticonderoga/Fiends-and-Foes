@@ -17,7 +17,7 @@ const PAGE_HEIGHT = window.innerHeight * 9/10
 class Test extends Component {
   constructor(){
     super()
-    const socketServer = process.env.NODE_ENV === 'development' ? 'http://localhost:3001' : 'https://fiendsandfoes.herokuapp.com';
+    const socketServer = process.env.NODE_ENV === 'development' ? 'http://192.168.137.121:3001' : 'https://fiendsandfoes.herokuapp.com';
     console.log('Connecting to', socketServer)
     this.socket = io.connect(socketServer)
     this.fiend = new FiendPlayer(this.socket)
@@ -163,10 +163,11 @@ class Test extends Component {
         // var player = newData.players.filter(player => player.id == this.fiend.localID)
         // console.log("plauer: ", player)
         this.fiend.draw(newData, this.stage)
-        const ids = Object.keys(this.fiend.gameData.players)
+        const ids = this.fiend.gameData.players.map(({id}) => id)
+        console.log('ids', ids, this.fiend.gameData.players)
         ids.map(id => {
           var {x, y} = this.fiend.gameData.mousePos[id] || {x:0, y:0}
-
+          console.log('setPos', x, y, id)
           this.fiend.setPos(x,y,id)
         })
 
