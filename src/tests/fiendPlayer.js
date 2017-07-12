@@ -44,6 +44,8 @@ export default class FiendPlayer{
         if(!this.playerObj[id]){
           this.playerObj[id] = player
           this.addKonva(stage, this.playerObj[id])
+          this.setPos(this.playerObj[id].x,this.playerObj[id].y,this.playerObj[id].id)
+
         }
 
       })

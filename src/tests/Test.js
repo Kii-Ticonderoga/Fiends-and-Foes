@@ -165,6 +165,9 @@ class Test extends Component {
         // console.log("plauer: ", player)
         this.fiend.draw(newData, this.stage)
         this.fiend.setPos(x,y,this.socket.id)
+        // Object.keys(this.fiend.mousePos).map( id => {
+        //   this.fiend.setPos
+        // })
       })
 
       this.socket.on("addPlayer", (playerData) =>{
