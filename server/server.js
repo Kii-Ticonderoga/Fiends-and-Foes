@@ -11,7 +11,6 @@ app.get('/*', function (req, res) {
    res.sendFile(path.join(__dirname, '..','build', 'index.html'));
 });
 
-
 const server = app.listen(port)
 var io = require('socket.io')(server);
 const GameState = require('./gameFunctions/gameState')

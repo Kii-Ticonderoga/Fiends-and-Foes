@@ -32,9 +32,9 @@ class GameState {
 // ***********************************
 
 
-// ***********************************
-//  Mice
-// ***********************************
+  // ***********************************
+  //  Mice
+  // ***********************************
   updateMousePos(mouseObj){
     if(this.mousePos[mouseObj.id]){
       this.mousePos[mouseObj.id].x = mouseObj.x
@@ -56,9 +56,9 @@ class GameState {
     return this.mousePos[mouseID]
   }
 
-// ***********************************
-// Players
-// ***********************************
+  // ***********************************
+  // Players
+  // ***********************************
 
   addPlayer(id){
     var initX = this.getRandomInt(40, Math.floor(BOARD_WIDTH * .90));
