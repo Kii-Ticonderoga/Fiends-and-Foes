@@ -72,15 +72,16 @@ class GameState {
     const mouseX  = this.getMousePos(id).x
     const mouseY  = this.getMousePos(id).y
 
-    console.log("this.getPlayer",this.getPlayer(id))
     var {x, y} = this.getPlayer(id)
     var {xVector, yVector} = this.vector(mouseX, mouseY, x, y)
+    console.log("pre update ",this.players)
     this.players[id].x = xVector
     this.players[id].y = yVector
+    console.log("post update ",this.players)
+
   }
 
   getPlayer(id){
-    console.log('whaaaaat',id, this.players)
     return this.players[id]
   }
 

@@ -64,7 +64,7 @@ io.on('connection', function (socket) {
 //		---gameData is an object with arrays for values
 
 	socket.emit("firstupdate", state.toJS())
-	setInterval(()=>io.emit('update', state.toJS()), 10)
+	setInterval(()=>io.emit('update', state.toJS()), 1000)
 
 	socket.on('sync', (gameData) => {
 
