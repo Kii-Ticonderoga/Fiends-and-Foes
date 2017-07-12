@@ -17,22 +17,9 @@ var io = require('socket.io')(server);
 const GameState = require('./gameFunctions/gameState')
 const state = new GameState();
 
-
-//    --- Define what port we will have the sockets listening on
-
 // ***********************************
-// Testing Socket logic and connections
+// Socket logic and connections
 // ***********************************
-
-// class Laser {
-//   constructor(id, xStart, yStart, xEnd, yEnd){
-//     this.id = id;
-//     this.xStart = xStart;
-//     this.yStart = yStart;
-//     this.xEnd = xEnd;
-//     this.yEnd = yEnd;
-//   }
-
 
 var connections = [];
 
