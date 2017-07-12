@@ -30,7 +30,7 @@ io.on('connection', function (socket) {
 	socket.on('joinGame', function(mouse){
 		 console.log("joined game")
      state.addPlayer(socket.id)
-     state.updateMousePos(mouse)
+     state.updateMousePosLocal(mouse)
      io.emit('addPlayer', state.getPlayer(socket.id));
    })
 
