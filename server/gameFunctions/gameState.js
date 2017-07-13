@@ -3,7 +3,11 @@ const BOARD_HEIGHT = 1000
 const BOARD_WIDTH = 600
 const FOOD_INTERVAL = 1000
 const EAT_RADIUS = 3
+const PLAYER_RADIUS = 10
 
+const Collision = require('./collision')
+
+const collide = new Collision()
 class GameState {
   constructor(){
     this.players = {}
@@ -22,12 +26,11 @@ class GameState {
   }
 
   vector(mouseX, mouseY, playerX, playerY){
-    console.log('vectors ENGAGE!',mouseX, mouseY, playerX, playerY)
 		let x = mouseX - playerX ;
 		let y = mouseY  - playerY ;
 		const vecLen = Math.sqrt(Math.pow(x, 2) + Math.pow(y,2))
-		x = x / vecLen * 10;
-		y = y / vecLen * 10;
+		x = x / vecLen / 100 ;
+		y = y / vecLen / 100 ;
 		return {xVector : playerX + x, yVector: playerY + y}
 	}
 // ***********************************
@@ -39,7 +42,6 @@ class GameState {
   //  Mice
   // ***********************************
   updateMousePosLocal(mouseObj){
-    console.log("mouse pre ", this.mousePos)
     if(this.mousePos[mouseObj.id]){
       this.mousePos[mouseObj.id].x = mouseObj.x
       this.mousePos[mouseObj.id].y = mouseObj.y
@@ -50,21 +52,17 @@ class GameState {
         y: mouseObj.y
       }
     }
-    console.log("mouse post ", this.mousePos)
   }
 
   updateMousePosBroad(){
 
-    var mousePosArr = Object.keys(this.mousePos).map( key => this.mousePos[key])  
-    console.log("Mouse pos Array: ", mousePosArr)
-    console.log("mouse pre non-local: ",this.mousePos)
+    var mousePosArr = Object.keys(this.mousePos).map( key => this.mousePos[key])
 
     mousePosArr.map( obj =>{
       var id = obj.id
       this.mousePos[id].x = obj.x
       this.mousePos[id].y = obj.y
     })
-    console.log("mouse post non-local: ",this.mousePos)
   }
 
   removeMousePos(mouseID){
@@ -88,21 +86,77 @@ class GameState {
     const mouseX  = this.getMousePos(id).x
     const mouseY  = this.getMousePos(id).y
 
-    var {x, y} = this.getPlayer(id)
-    var {xVector, yVector} = this.vector(mouseX, mouseY, x, y)
-    console.log("pre update ",this.players)
-    this.players[id].x = xVector
-    this.players[id].y = yVector
-    console.log("post update ",this.players)
+    if(this.players[id]){
+      var {x, y} = this.getPlayer(id)
+      var {xVector, yVector} = this.vector(mouseX, mouseY, x, y)
+      this.players[id].x = xVector
+      this.players[id].y = yVector
+    }
 
+//      this.playerDetection()
   }
+
+  // playerDetection(){
+  //   var laserArr = Object.keys(this.lasers).map((key) => this.lasers[key])
+  //   var playerArr = Object.keys(this.players).map((key) => this.players[key])
+  //   console.log("LASER BEAM", laserArr)
+  //   console.log("peeps ", playerArr)
+  //   laserArr.forEach( (laserObj, index) => {
+  //     playerArr.forEach((playerObj, index) => {
+  //       var {startX, endX, startY, endY} = laserObj
+  //       var {x,y} = playerObj
+  //
+  //       var sameId = laserObj.id == playerObj.id
+  //       var collision = collide.collideLineCircle(startX, startY, endX, endY, x, y, (PLAYER_RADIUS * 2))
+  //       console.log("COLLIDE FUNC id ", !sameId, laserObj.id, playerObj.id)
+  //       console.log("COLLIDE FUNC collision ", collision)
+  //       if (!sameId && collision){
+  //         console.log("COLLLLLSIION!!!!!!!")
+  //         this.removePlayer(playerObj.id)
+  //         console.log("end of if statement")
+  //
+  //       }
+  //     })
+  //   })
+  // }
 
   getPlayer(id){
     return this.players[id]
   }
 
   removePlayer(removeId){
+    console.log("Remove player call ")
     delete this.players[removeId]
+  }
+
+  // ***********************************
+  // Lasers
+  // ***********************************
+
+  getLaser(id){
+    console.log("get laser asked ",id)
+    return this.lasers[id]
+  }
+
+  addLaser(id){
+    var startX = this.players[id].x
+    var startY = this.players[id].y
+
+    var endX = this.mousePos[id].x
+    var endY = this.mousePos[id].y
+
+    this.lasers[id] = {
+      id: id,
+      startX: startX,
+      startY: startY,
+      endX: endX,
+      endY: endY
+    }
+    console.log("created laser ", this.lasers[id])
+  }
+
+  removeLaser(removeId){
+    delete this.lasers[removeId]
   }
 
   toJS(){

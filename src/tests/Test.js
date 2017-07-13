@@ -82,6 +82,10 @@ class Test extends Component {
       }
     })
 
+    this.circleMap.on("mousedown", () => {
+      this.socket.emit("shoot", (this.socket.id))
+    })
+
 	}
 
     /**************************************************************************
@@ -148,7 +152,7 @@ class Test extends Component {
     this.mapGen()
 
     this.socket.on('connect', ()=>{
-      console.log('connected', this.socket, this.socket.id)
+
 
       this.socket.on("firstupdate", (newData) => {
         this.fiend.localID = this.socket.id
@@ -160,31 +164,33 @@ class Test extends Component {
 
       this.socket.on('update', (newData) => {
         this.fiend.gameData = newData
-        // var player = newData.players.filter(player => player.id == this.fiend.localID)
-        // console.log("plauer: ", player)
         this.fiend.draw(newData, this.stage)
         const ids = this.fiend.gameData.players.map(({id}) => id)
-        console.log('ids', ids, this.fiend.gameData.players)
+
         ids.map(id => {
           var {x, y} = this.fiend.gameData.mousePos[id] || {x:0, y:0}
-          console.log('setPos', x, y, id)
+
           this.fiend.setPos(x,y,id)
         })
-
-        // Object.keys(this.fiend.mousePos).map( id => {
-        //   this.fiend.setPos
-        // })
       })
 
       this.socket.on("addPlayer", (playerData) =>{
         this.fiend.gameData.players.push(playerData)
-        this.socket.emit("sync", this.fiend.gameData)
+
       })
 
       this.socket.on('removePlayer', (playerObj) => {
         this.fiend.removePlayer(playerObj)
         this.fiend.destroyPlayer(playerObj)
-        this.socket.emit("sync", this.fiend.gameData)
+
+      })
+
+      this.socket.on('fired', (laserData) => {
+        const ids = Object.keys(this.fiend.gameData.lasers).map(({id}) => id)
+
+        ids.map(id => {
+          this.fiend.drawLaser(this.stage, laserData)
+        })
       })
 
     })

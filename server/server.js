@@ -6,7 +6,7 @@ const path = require('path')
 var app = express();
 app.use(express.static(path.join(__dirname, '..', 'build')))
 const port = process.env.PORT || 3001;
-const RENDER_INTERVAL = 100
+const RENDER_INTERVAL = 25
 app.get('/*', function (req, res) {
    res.sendFile(path.join(__dirname, '..','build', 'index.html'));
 });
@@ -28,18 +28,10 @@ io.on('connection', function (socket) {
 	connections.push(socket)
 
 	socket.on('joinGame', function(mouse){
-		 console.log("joined game")
      state.addPlayer(socket.id)
      state.updateMousePosLocal(mouse)
      io.emit('addPlayer', state.getPlayer(socket.id));
    })
-
-
-
-	 socket.on('disconnect', function(player){
-		 console.log("disconnected", player)
-
-	 });
 
 		socket.on('leaveGame', (playerId) => {
 			socket.emit('removePlayer', state.getPlayer(playerId))
@@ -51,14 +43,17 @@ io.on('connection', function (socket) {
 
     socket.on("mouseMove", (mouseData) => {
       state.updateMousePosLocal(mouseData)
-      console.log('cheese', mouseData)
       state.updatePlayer(mouseData.id)
       state.updateMousePosBroad()
     })
 
-	socket.on('shoot', (laser) => {
-     var laser = new Laser(laser.id, laser.xStart, laser.yStart, laser.xEnd, laser.yEnd);
-     gameServer.addLaser(laser)
+	socket.on('shoot', (id) => {
+    console.log("shot detected", id)
+    state.removeLaser(id)
+    state.addLaser(id)
+
+    console.log("sending fired ", state.getLaser(id))
+    io.emit('fired', (state.getLaser(id)))
    })
 
 //		---Listens for sync emit
@@ -66,9 +61,5 @@ io.on('connection', function (socket) {
 
 	socket.emit("firstupdate", state.toJS())
 	setInterval(()=>io.emit('update', state.toJS()), RENDER_INTERVAL)
-
-	socket.on('sync', (gameData) => {
-
-	})
 
 });

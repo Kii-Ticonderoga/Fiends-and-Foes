@@ -12,7 +12,9 @@ export default class FiendPlayer{
     }
 
     this.playerObj ={}
+    this.laserObj = {}
     this.konvaLayers = []
+    this.laserKonvaLayers = []
     this.socket = socket
     this.localID = ""
   }
@@ -52,7 +54,7 @@ export default class FiendPlayer{
   }
 
   getRandomColor(){
-    var colorArr = ["red","blue","green","yellow","orange","purple","black","white","violet","brown","grey"]
+    var colorArr = ["red","blue","green","yellow","orange","purple","white","violet","brown","grey"]
     var randomNum = Math.floor(Math.random()* 11)
     return colorArr[randomNum]
   }
@@ -72,7 +74,6 @@ export default class FiendPlayer{
 	setPos(x, y, id){
     var playerKonva = _.get(this, `playerObj[${id}].user`);
     if(playerKonva){
-      console.log('setting position', x,y,id,)
   	   var anim = new Konva.Animation((frame) => {
   			 playerKonva.setX(x)
   			 playerKonva.setY(y)
@@ -98,5 +99,34 @@ export default class FiendPlayer{
         layer.konvaLayer.destroyChildren()
       }
     })
+  }
+
+// ***********************************
+// Lasers
+// ***********************************
+
+  drawLaser(stage, laserData){
+    var {id} = laserData
+    this.laserKonvaLayers.forEach( (layer) => {
+      if (layer.id === id ){
+        console.log("laser if ", layer.laserLayer)
+        layer.laserLayer.destroy()
+      }
+    })
+
+    //Draw a konva line using defined variables
+    this.laserObj.user = new Konva.Line({
+      points: [laserData.startX, laserData.startY, laserData.endX, laserData.endY],
+      stroke: this.getRandomColor(),
+      strokeWidth: 2
+    })
+
+    let laserLayerObj = {}
+    laserLayerObj.id = laserData.id
+    laserLayerObj.laserLayer = new Konva.Layer()
+    laserLayerObj.laserLayer.add(this.laserObj.user)
+    this.laserKonvaLayers.push(laserLayerObj)
+    stage.add(laserLayerObj.laserLayer)
+
   }
 }
