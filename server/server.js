@@ -44,19 +44,19 @@ io.on('connection', function (socket) {
 
     socket.on("mouseMove", (mouseData) => {
       state.updateMousePosLocal(mouseData)
-      state.updatePlayer(mouseData.id)
+      state.updatePlayer(mouseData.id, ()=>{
+        io.emit('removePlayer', {id: mouseData.id})
+      })
       //state.updateMousePosBroad()
     })
 
 	socket.on('shoot', (id) => {
-    console.log("shot detected", id)
     state.removeLaser(id)
     if(state.getPlayer(id)){
       state.addLaser(id)
     }
 
 
-    console.log("sending fired ", state.getLaser(id))
     io.emit('fired', (state.getLaser(id)))
    })
 

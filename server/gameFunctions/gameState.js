@@ -83,7 +83,7 @@ class GameState {
     var initY = this.getRandomInt(40, Math.floor(BOARD_WIDTH * .90));
     this.players[id] = {id: id, x: initX, y: initY, isAlive: true}
   }
-  updatePlayer(id){
+  updatePlayer(id, onDeath){
     const mouseX  = this.getMousePos(id).x
     const mouseY  = this.getMousePos(id).y
 
@@ -94,14 +94,13 @@ class GameState {
       this.players[id].y = yVector
     }
 
-      this.playerDetection()
+      this.playerDetection(onDeath)
   }
 
-  playerDetection(){
+  playerDetection(onDeath){
     var laserArr = Object.keys(this.lasers).map((key) => this.lasers[key])
     var playerArr = Object.keys(this.players).map((key) => this.players[key])
-    console.log("LASER BEAM", laserArr)
-    console.log("peeps ", playerArr)
+
     laserArr.forEach( (laserObj, index) => {
       playerArr.forEach((playerObj, index) => {
         var {startX, endX, startY, endY} = laserObj
@@ -109,12 +108,11 @@ class GameState {
 
         var sameId = laserObj.id == playerObj.id
         var collision = collide.collideLineCircle(startX, startY, endX, endY, x, y, (PLAYER_RADIUS * 2))
-        console.log("COLLIDE FUNC id ", !sameId, laserObj.id, playerObj.id)
-        console.log("COLLIDE FUNC collision ", collision)
+
         if (!sameId && collision){
-          console.log("COLLLLLSIION!!!!!!!")
+          onDeath()
+          this.removeLaser(playerObj.id)
           this.removePlayer(playerObj.id)
-          console.log("end of if statement")
 
         }
       })
@@ -127,7 +125,6 @@ class GameState {
 
 
   removePlayer(removeId){
-    console.log("Remove player call ")
     delete this.players[removeId]
   }
 
@@ -136,7 +133,6 @@ class GameState {
   // ***********************************
 
   getLaser(id){
-    console.log("get laser asked ",id)
     return this.lasers[id]
   }
 
@@ -154,7 +150,6 @@ class GameState {
       endX: endX,
       endY: endY
     }
-    console.log("created laser ", this.lasers[id])
   }
 
   removeLaser(removeId){

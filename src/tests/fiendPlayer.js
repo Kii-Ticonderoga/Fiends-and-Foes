@@ -41,7 +41,6 @@ export default class FiendPlayer{
   draw(data, stage){
       this.gameData = data;
       this.gameData.players.map(player => {
-        console.log("draw player ", player)
         const {x, y, id} = player;
 
         if(!id){
@@ -85,7 +84,6 @@ export default class FiendPlayer{
        }, this.konvaLayers.map(({konvaLayer}) => konvaLayer));
   	   anim.start()
    }
-   console.log("konva coors ", playerKonva.getX(), playerKonva.getY())
 	}
 
   addPlayer(player){
@@ -100,7 +98,6 @@ export default class FiendPlayer{
 
 //    --- player is the actual player object ie konva
   destroyPlayer(player){
-    console.log("player in destroy ", player)
     var {id} = player
     this.konvaLayers.forEach( (layer) => {
       if (layer.id === id ){
@@ -114,28 +111,38 @@ export default class FiendPlayer{
 // ***********************************
 
   drawLaser(stage, laserData){
+    if (laserData){
+      var {id} = laserData
+
+      this.laserKonvaLayers.forEach( (layer) => {
+        if (layer.id === id ){
+          layer.laserLayer.destroy()
+        }
+      })
+
+      //Draw a konva line using defined variables
+      this.laserObj.user = new Konva.Line({
+        points: [laserData.startX, laserData.startY, laserData.endX, laserData.endY],
+        stroke: this.getRandomColor(),
+        strokeWidth: 2
+      })
+
+      let laserLayerObj = {}
+      laserLayerObj.id = laserData.id
+      laserLayerObj.laserLayer = new Konva.Layer()
+      laserLayerObj.laserLayer.add(this.laserObj.user)
+      this.laserKonvaLayers.push(laserLayerObj)
+      stage.add(laserLayerObj.laserLayer)
+    }
+  }
+
+  destroyLaser(laserData){
     var {id} = laserData
     this.laserKonvaLayers.forEach( (layer) => {
       if (layer.id === id ){
-        console.log("laser if ", layer.laserLayer)
         layer.laserLayer.destroy()
       }
     })
-
-    //Draw a konva line using defined variables
-    this.laserObj.user = new Konva.Line({
-      points: [laserData.startX, laserData.startY, laserData.endX, laserData.endY],
-      stroke: this.getRandomColor(),
-      strokeWidth: 2
-    })
-
-    let laserLayerObj = {}
-    laserLayerObj.id = laserData.id
-    laserLayerObj.laserLayer = new Konva.Layer()
-    laserLayerObj.laserLayer.add(this.laserObj.user)
-    this.laserKonvaLayers.push(laserLayerObj)
-    stage.add(laserLayerObj.laserLayer)
-
   }
 
 }

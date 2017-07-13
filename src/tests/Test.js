@@ -7,8 +7,8 @@ import io from "socket.io-client"
 import FiendPlayer from './fiendPlayer'
 import _ from 'lodash';
 
-const PAGE_WIDTH = window.innerWidth * 5/6
-const PAGE_HEIGHT = window.innerHeight * 9/10
+const PAGE_WIDTH = 1300
+const PAGE_HEIGHT = 800
 
 //  ***********************************
 //  Testing server connections
@@ -17,7 +17,7 @@ const PAGE_HEIGHT = window.innerHeight * 9/10
 class Test extends Component {
   constructor(){
     super()
-    const socketServer = process.env.NODE_ENV === 'development' ? 'http://192.168.137.121:3001' : 'https://fiendsandfoes.herokuapp.com';
+    const socketServer = process.env.NODE_ENV === 'development' ? 'http://192.168.137.162:3001' : 'https://fiendsandfoes.herokuapp.com';
     console.log('Connecting to', socketServer)
     this.socket = io.connect(socketServer)
     this.fiend = new FiendPlayer(this.socket)
@@ -88,51 +88,6 @@ class Test extends Component {
 
 	}
 
-    /**************************************************************************
-    add these functions in da futur
-    **************************************************************************/
-
-    // circleMap.on("mousedown", function() {
-    //   console.log("mousedown")
-    //   var mousePos = self.stage.getPointerPosition();
-    //   var laser = new Laser(player.getPlayerX(), player.getPlayerY(), mousePos.x, mousePos.y) // --- player will need to be defined
-    //   this.state.lasers.push(laser)
-    //   laserLayer.add(laser)
-    //   self.stage.add(laserLayer)
-    //   console.log(laser);
-    //
-    //
-    //   var laserData = {
-    //     xStart: laser.getStartX(),
-    //     yStart: laser.getStartY(),
-    //     xEnd: laser.getEndX(),
-    //     yEnd: laser.getEndY(),
-    //     id: ""
-    //   }
-    //   this.state.players.forEach( player => {
-    //     if (player.x == laserData.xStart && player.y == laserData.yStart){
-    //       laserData.id = player.id
-    //     }
-    //   })
-    //
-    //   socket.emit("shoot", laserData)
-    //
-    // })
-    //
-    // circleMap.on("mouseup", function() {
-    //   console.log("mouse up");
-    //   laserLayer.destroyChildren();
-    //   console.log("children destroyed ", laserLayer.destroyChildren())
-    // })
-    //
-    // laserLayer.on("mouseup", function() {
-    //   console.log("mouse up");
-    //   laserLayer.destroyChildren();
-    //   console.log("children destroyed ", laserLayer.destroyChildren())
-    // })
-
-  //}
-
   getRandomInt(min, max){
     return Math.floor(Math.random() * (max - min)) + min;
   }
@@ -141,7 +96,7 @@ class Test extends Component {
 
     this.stage = new Konva.Stage({
       container: "container",
-      width: window.innerWidth,
+      width: PAGE_WIDTH,
       height: PAGE_HEIGHT
     })
 
@@ -170,7 +125,6 @@ class Test extends Component {
          this.fiend.gameData.players.forEach( (obj) =>{
            playersPlay[obj.id] = obj
          })
-        //console.log("ids", ids)
         ids.map(id => {
           var {x, y} = playersPlay[id] || {x:0, y:0}
 
@@ -185,9 +139,14 @@ class Test extends Component {
       })
 
       this.socket.on('removePlayer', (playerObj) => {
-        console.log("playerObj", playerObj)
-        this.fiend.removePlayer(playerObj)
-        this.fiend.destroyPlayer(playerObj)
+        if(playerObj.id){
+          if(playerObj.id === this.socket.id){
+            this.props.history.push('/')
+          }
+          this.fiend.removePlayer(playerObj)
+          this.fiend.destroyPlayer(playerObj)
+          this.fiend.destroyLaser( this.fiend.gameData.lasers[playerObj.id])
+        }
 
       })
 
