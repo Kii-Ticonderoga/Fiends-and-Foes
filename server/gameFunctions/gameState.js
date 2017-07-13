@@ -4,7 +4,7 @@ const BOARD_WIDTH = 600
 const FOOD_INTERVAL = 1000
 const EAT_RADIUS = 3
 const PLAYER_RADIUS = 10
-const MOVE_DIST = 3
+const MOVE_DIST = 5
 
 const Collision = require('./collision')
 
