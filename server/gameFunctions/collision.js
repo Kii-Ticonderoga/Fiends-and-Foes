@@ -4,16 +4,6 @@
 
   }
 
-  // detectCollision(x1,  y1,  x2,  y2,  cx,  cy,  diameter){
-  //   var self = this;
-  //
-  //  this.players.forEach( (player) => {
-  //     if(player.id != laser.id && collideLineCircle(x1,  y1,  x2,  y2,  cx,  cy,  diameter)){
-  //       self.removePlayer(player.id)
-  //     }
-  //   })
-  // }
-
   collideLineCircle( x1,  y1,  x2,  y2,  cx,  cy,  diameter) {
 
     var inside1 = this.collidePointCircle(x1,y1, cx,cy,diameter);

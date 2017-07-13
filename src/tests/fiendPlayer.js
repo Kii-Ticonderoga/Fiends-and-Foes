@@ -40,9 +40,14 @@ export default class FiendPlayer{
 
   draw(data, stage){
       this.gameData = data;
-
-      data.players.map(player => {
+      this.gameData.players.map(player => {
+        console.log("draw player ", player)
         const {x, y, id} = player;
+
+        if(!id){
+          this.destroyPlayer(player)
+        }
+
         if(!this.playerObj[id]){
           this.playerObj[id] = player
           this.addKonva(stage, this.playerObj[id])
@@ -93,11 +98,13 @@ export default class FiendPlayer{
     this.gameData.players.map( player => player.isAlive = false)
   }
 
+//    --- player is the actual player object ie konva
   destroyPlayer(player){
+    console.log("player in destroy ", player)
     var {id} = player
     this.konvaLayers.forEach( (layer) => {
       if (layer.id === id ){
-        layer.konvaLayer.destroyChildren()
+        layer.konvaLayer.destroy()
       }
     })
   }
@@ -130,4 +137,5 @@ export default class FiendPlayer{
     stage.add(laserLayerObj.laserLayer)
 
   }
+
 }

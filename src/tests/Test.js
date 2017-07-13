@@ -173,7 +173,7 @@ class Test extends Component {
         //console.log("ids", ids)
         ids.map(id => {
           var {x, y} = playersPlay[id] || {x:0, y:0}
-          
+
 
           this.fiend.setPos(x,y,id)
         })
@@ -185,6 +185,7 @@ class Test extends Component {
       })
 
       this.socket.on('removePlayer', (playerObj) => {
+        console.log("playerObj", playerObj)
         this.fiend.removePlayer(playerObj)
         this.fiend.destroyPlayer(playerObj)
 
