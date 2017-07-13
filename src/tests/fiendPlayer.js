@@ -63,18 +63,6 @@ export default class FiendPlayer{
     return colorArr[randomNum]
   }
 
-	getPlayerX(player){
-		return player.getX()
-	}
-
-	getPlayerY(player){
-		return player.getY()
-	}
-
-	getPlayerRadius(player){
-		return player.getRadius()
-	}
-
 	setPos(x, y, id){
     var playerKonva = _.get(this, `playerObj[${id}].user`);
     if(playerKonva){
@@ -98,12 +86,17 @@ export default class FiendPlayer{
 
 //    --- player is the actual player object ie konva
   destroyPlayer(player){
-    var {id} = player
-    this.konvaLayers.forEach( (layer) => {
-      if (layer.id === id ){
-        layer.konvaLayer.destroy()
-      }
-    })
+    if(player){
+      var {id} = player
+      this.konvaLayers.forEach( (layer, index) => {
+        if (layer.id === id ){
+          this.konvaLayers.splice(index,1)
+          if(layer.konvaLayer){
+            layer.konvaLayer.destroy()
+          }
+        }
+      })
+    }
   }
 
 // ***********************************
@@ -113,10 +106,12 @@ export default class FiendPlayer{
   drawLaser(stage, laserData){
     if (laserData){
       var {id} = laserData
-
-      this.laserKonvaLayers.forEach( (layer) => {
+      this.laserKonvaLayers.forEach( (layer, index) => {
         if (layer.id === id ){
-          layer.laserLayer.destroy()
+          this.laserKonvaLayers.splice(index,1)
+          if(layer.laserLayer){
+            layer.laserLayer.destroy()
+          }
         }
       })
 
@@ -139,9 +134,12 @@ export default class FiendPlayer{
   destroyLaser(laserData){
     if(laserData){
       var {id} = laserData
-      this.laserKonvaLayers.forEach( (layer) => {
+      this.laserKonvaLayers.forEach( (layer, index) => {
         if (layer.id === id ){
-          layer.laserLayer.destroy()
+          this.laserKonvaLayers.splice(index,1)
+          if(layer.laserLayer){
+            layer.laserLayer.destroy()
+          }
         }
       })
     }

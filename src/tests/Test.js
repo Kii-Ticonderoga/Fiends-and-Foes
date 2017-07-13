@@ -17,7 +17,7 @@ const PAGE_HEIGHT = 800
 class Test extends Component {
   constructor(){
     super()
-    const socketServer = process.env.NODE_ENV === 'development' ? 'http://192.168.137.162:3001' : 'https://fiendsandfoes.herokuapp.com';
+    const socketServer = process.env.NODE_ENV === 'development' ? 'http://192.168.137.181:3001' : 'https://fiendsandfoes.herokuapp.com';
     console.log('Connecting to', socketServer)
     this.socket = io.connect(socketServer)
     this.fiend = new FiendPlayer(this.socket)
@@ -63,7 +63,7 @@ class Test extends Component {
     this.topTenLayer.add(this.playerText);
 		this.stage.add(this.mapLayer);
     this.stage.add(this.topTenLayer);
-    //this.stage.add(this.genFoodLayer());
+
     var laserLayer = new Konva.Layer();
     var laser = "";
 
@@ -119,7 +119,6 @@ class Test extends Component {
       })
 
       this.socket.on("syncLaser", (laserData) => {
-        console.log('Frickin laser beams', laserData)
         laserData.map(laser => {
           this.fiend.drawLaser(this.stage, laser)
         })
@@ -129,8 +128,6 @@ class Test extends Component {
         this.fiend.gameData = newData
         this.fiend.draw(newData, this.stage)
 
-
-
         const ids = this.fiend.gameData.players.map(({id}) => id)
         const playersPlay ={}
          this.fiend.gameData.players.forEach( (obj) =>{
@@ -138,7 +135,6 @@ class Test extends Component {
          })
         ids.map(id => {
           var {x, y} = playersPlay[id] || {x:0, y:0}
-
 
           this.fiend.setPos(x,y,id)
         })
@@ -154,9 +150,10 @@ class Test extends Component {
           if(playerObj.id === this.socket.id){
             this.props.history.push('/')
           }
+          this.fiend.destroyLaser( this.fiend.gameData.lasers[playerObj.id])
           this.fiend.removePlayer(playerObj)
           this.fiend.destroyPlayer(playerObj)
-          this.fiend.destroyLaser( this.fiend.gameData.lasers[playerObj.id])
+
         }
 
       })

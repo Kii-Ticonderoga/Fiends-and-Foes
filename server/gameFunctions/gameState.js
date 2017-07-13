@@ -4,7 +4,7 @@ const BOARD_WIDTH = 600
 const FOOD_INTERVAL = 1000
 const EAT_RADIUS = 3
 const PLAYER_RADIUS = 10
-const MOVE_DIST = 5
+const MOVE_DIST = 15
 
 const Collision = require('./collision')
 
@@ -34,9 +34,9 @@ class GameState {
 		y = y / vecLen * MOVE_DIST;
 		return {xVector : playerX + x, yVector: playerY + y}
 	}
-// ***********************************
+// *****************************************************************************
 //  Adds, updates, gets, and removes
-// ***********************************
+// *****************************************************************************
 
 
   // ***********************************
@@ -54,17 +54,6 @@ class GameState {
       }
     }
   }
-
-  // updateMousePosBroad(){
-  //
-  //   var mousePosArr = Object.keys(this.mousePos).map( key => this.mousePos[key])
-  //
-  //   mousePosArr.map( obj =>{
-  //     var id = obj.id
-  //     this.mousePos[id].x = obj.x
-  //     this.mousePos[id].y = obj.y
-  //   })
-  // }
 
   removeMousePos(mouseID){
     delete this.mousePos[mouseID]

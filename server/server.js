@@ -6,7 +6,7 @@ const path = require('path')
 var app = express();
 app.use(express.static(path.join(__dirname, '..', 'build')))
 const port = process.env.PORT || 3001;
-const RENDER_INTERVAL = 25
+const RENDER_INTERVAL = 15
 app.get('/*', function (req, res) {
    res.sendFile(path.join(__dirname, '..','build', 'index.html'));
 });
@@ -37,7 +37,8 @@ io.on('connection', function (socket) {
 		socket.on('leaveGame', (playerId) => {
 			socket.emit('removePlayer', state.getPlayer(playerId))
 			socket.broadcast.emit('removePlayer', state.getPlayer(playerId))
-			state.removePlayer(playerId)
+
+      state.removePlayer(playerId)
       state.removeMousePos(playerId)
       state.removeLaser(playerId)
 
@@ -46,9 +47,9 @@ io.on('connection', function (socket) {
     socket.on("mouseMove", (mouseData) => {
       state.updateMousePosLocal(mouseData)
       state.updatePlayer(mouseData.id, ()=>{
+        state.removeLaser(mouseData.id)
         io.emit('removePlayer', {id: mouseData.id})
       })
-      //state.updateMousePosBroad()
     })
 
 	socket.on('shoot', (id) => {
@@ -57,12 +58,8 @@ io.on('connection', function (socket) {
       state.addLaser(id)
     }
 
-
     io.emit('fired', (state.getLaser(id)))
    })
-
-//		---Listens for sync emit
-//		---gameData is an object with arrays for values
 
 	socket.emit("firstupdate", state.toJS())
 	setInterval(()=>io.emit('update', state.toJS()), RENDER_INTERVAL)
