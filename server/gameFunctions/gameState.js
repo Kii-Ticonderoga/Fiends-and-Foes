@@ -93,7 +93,6 @@ class GameState {
       this.players[id].x = xVector
       this.players[id].y = yVector
     }
-    console.log("player coors ", this.players[id].x, this.players[id].y)
 
 //      this.playerDetection()
   }
