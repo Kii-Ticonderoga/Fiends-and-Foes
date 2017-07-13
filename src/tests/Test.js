@@ -166,11 +166,14 @@ class Test extends Component {
         this.fiend.gameData = newData
         this.fiend.draw(newData, this.stage)
         const ids = this.fiend.gameData.players.map(({id}) => id)
-
+        const playersPlay ={}
+         this.fiend.gameData.players.forEach( (obj) =>{
+           playersPlay[obj.id] = obj
+         })
         //console.log("ids", ids)
         ids.map(id => {
-          var {x, y} = this.fiend.gameData.players[0] || {x:0, y:0}
-          //console.log("fiend game player ",this.fiend.gameData.players[0].x)
+          var {x, y} = playersPlay[id] || {x:0, y:0}
+          
 
           this.fiend.setPos(x,y,id)
         })
