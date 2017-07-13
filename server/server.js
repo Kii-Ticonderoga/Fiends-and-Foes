@@ -6,7 +6,7 @@ const path = require('path')
 var app = express();
 app.use(express.static(path.join(__dirname, '..', 'build')))
 const port = process.env.PORT || 3001;
-const RENDER_INTERVAL = 15
+const RENDER_INTERVAL = 10
 app.get('/*', function (req, res) {
    res.sendFile(path.join(__dirname, '..','build', 'index.html'));
 });
