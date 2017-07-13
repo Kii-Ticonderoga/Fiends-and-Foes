@@ -115,11 +115,22 @@ class Test extends Component {
         this.socket.emit("joinGame", {x: 0, y: 0, id: this.fiend.localID})
         this.fiend.gameData = newData
         this.fiend.draw(newData, this.stage)
+
+      })
+
+      this.socket.on("syncLaser", (laserData) => {
+        console.log('Frickin laser beams', laserData)
+        laserData.map(laser => {
+          this.fiend.drawLaser(this.stage, laser)
+        })
       })
 
       this.socket.on('update', (newData) => {
         this.fiend.gameData = newData
         this.fiend.draw(newData, this.stage)
+
+
+
         const ids = this.fiend.gameData.players.map(({id}) => id)
         const playersPlay ={}
          this.fiend.gameData.players.forEach( (obj) =>{
@@ -139,7 +150,7 @@ class Test extends Component {
       })
 
       this.socket.on('removePlayer', (playerObj) => {
-        if(playerObj.id){
+        if(playerObj){
           if(playerObj.id === this.socket.id){
             this.props.history.push('/')
           }
@@ -151,11 +162,7 @@ class Test extends Component {
       })
 
       this.socket.on('fired', (laserData) => {
-        const ids = Object.keys(this.fiend.gameData.lasers).map(({id}) => id)
-
-        ids.map(id => {
-          this.fiend.drawLaser(this.stage, laserData)
-        })
+        this.fiend.drawLaser(this.stage, laserData)
       })
 
     })

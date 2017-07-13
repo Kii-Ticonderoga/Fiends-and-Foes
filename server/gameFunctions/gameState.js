@@ -111,7 +111,7 @@ class GameState {
 
         if (!sameId && collision){
           onDeath()
-          this.removeLaser(playerObj.id)
+          this.removeLaser(playerObj)
           this.removePlayer(playerObj.id)
 
         }
@@ -134,6 +134,10 @@ class GameState {
 
   getLaser(id){
     return this.lasers[id]
+  }
+
+  getLasers(){
+    return Object.keys(this.lasers).map(key => this.lasers[key])
   }
 
   addLaser(id){

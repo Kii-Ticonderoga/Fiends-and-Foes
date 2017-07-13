@@ -137,12 +137,14 @@ export default class FiendPlayer{
   }
 
   destroyLaser(laserData){
-    var {id} = laserData
-    this.laserKonvaLayers.forEach( (layer) => {
-      if (layer.id === id ){
-        layer.laserLayer.destroy()
-      }
-    })
+    if(laserData){
+      var {id} = laserData
+      this.laserKonvaLayers.forEach( (layer) => {
+        if (layer.id === id ){
+          layer.laserLayer.destroy()
+        }
+      })
+    }
   }
 
 }

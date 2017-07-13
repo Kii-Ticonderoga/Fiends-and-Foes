@@ -31,6 +31,7 @@ io.on('connection', function (socket) {
      state.addPlayer(socket.id)
      state.updateMousePosLocal(mouse)
      io.emit('addPlayer', state.getPlayer(socket.id));
+     io.emit('syncLaser', state.getLasers())
    })
 
 		socket.on('leaveGame', (playerId) => {
