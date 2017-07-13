@@ -4,6 +4,7 @@ const BOARD_WIDTH = 600
 const FOOD_INTERVAL = 1000
 const EAT_RADIUS = 3
 const PLAYER_RADIUS = 10
+const MOVE_DIST = 3
 
 const Collision = require('./collision')
 
@@ -29,8 +30,8 @@ class GameState {
 		let x = mouseX - playerX ;
 		let y = mouseY  - playerY ;
 		const vecLen = Math.sqrt(Math.pow(x, 2) + Math.pow(y,2))
-		x = x / vecLen / 100 ;
-		y = y / vecLen / 100 ;
+		x = x / vecLen * MOVE_DIST;
+		y = y / vecLen * MOVE_DIST;
 		return {xVector : playerX + x, yVector: playerY + y}
 	}
 // ***********************************
@@ -54,16 +55,16 @@ class GameState {
     }
   }
 
-  updateMousePosBroad(){
-
-    var mousePosArr = Object.keys(this.mousePos).map( key => this.mousePos[key])
-
-    mousePosArr.map( obj =>{
-      var id = obj.id
-      this.mousePos[id].x = obj.x
-      this.mousePos[id].y = obj.y
-    })
-  }
+  // updateMousePosBroad(){
+  //
+  //   var mousePosArr = Object.keys(this.mousePos).map( key => this.mousePos[key])
+  //
+  //   mousePosArr.map( obj =>{
+  //     var id = obj.id
+  //     this.mousePos[id].x = obj.x
+  //     this.mousePos[id].y = obj.y
+  //   })
+  // }
 
   removeMousePos(mouseID){
     delete this.mousePos[mouseID]
@@ -87,11 +88,12 @@ class GameState {
     const mouseY  = this.getMousePos(id).y
 
     if(this.players[id]){
-      var {x, y} = this.getPlayer(id)
+      var {x, y} = this.players[id]
       var {xVector, yVector} = this.vector(mouseX, mouseY, x, y)
       this.players[id].x = xVector
       this.players[id].y = yVector
     }
+    console.log("player coors ", this.players[id].x, this.players[id].y)
 
 //      this.playerDetection()
   }

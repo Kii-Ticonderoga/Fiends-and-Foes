@@ -44,7 +44,7 @@ io.on('connection', function (socket) {
     socket.on("mouseMove", (mouseData) => {
       state.updateMousePosLocal(mouseData)
       state.updatePlayer(mouseData.id)
-      state.updateMousePosBroad()
+      //state.updateMousePosBroad()
     })
 
 	socket.on('shoot', (id) => {

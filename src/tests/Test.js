@@ -167,8 +167,10 @@ class Test extends Component {
         this.fiend.draw(newData, this.stage)
         const ids = this.fiend.gameData.players.map(({id}) => id)
 
+        //console.log("ids", ids)
         ids.map(id => {
-          var {x, y} = this.fiend.gameData.mousePos[id] || {x:0, y:0}
+          var {x, y} = this.fiend.gameData.players[0] || {x:0, y:0}
+          //console.log("fiend game player ",this.fiend.gameData.players[0].x)
 
           this.fiend.setPos(x,y,id)
         })

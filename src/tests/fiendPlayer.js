@@ -80,6 +80,7 @@ export default class FiendPlayer{
        }, this.konvaLayers.map(({konvaLayer}) => konvaLayer));
   	   anim.start()
    }
+   console.log("konva coors ", playerKonva.getX(), playerKonva.getY())
 	}
 
   addPlayer(player){
