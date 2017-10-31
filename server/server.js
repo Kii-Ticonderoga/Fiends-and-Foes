@@ -35,13 +35,14 @@ io.on('connection', function (socket) {
    })
 
 		socket.on('leaveGame', (playerId) => {
-			socket.emit('removePlayer', state.getPlayer(playerId))
-			socket.broadcast.emit('removePlayer', state.getPlayer(playerId))
+      if (playerId) {
+  			socket.emit('removePlayer', state.getPlayer(playerId))
+  			socket.broadcast.emit('removePlayer', state.getPlayer(playerId))
 
-      state.removePlayer(playerId)
-      state.removeMousePos(playerId)
-      state.removeLaser(playerId)
-
+        state.removePlayer(playerId)
+        state.removeMousePos(playerId)
+        state.removeLaser(playerId)
+      }
 		})
 
     socket.on("mouseMove", (mouseData) => {
@@ -53,13 +54,14 @@ io.on('connection', function (socket) {
     })
 
 	socket.on('shoot', (id) => {
-    state.removeLaser(id)
-    if(state.getPlayer(id)){
-      state.addLaser(id)
+    if (id) {
+      state.removeLaser(id)
+      if(state.getPlayer(id)){
+        state.addLaser(id)
+      }
+      io.emit('fired', (state.getLaser(id)))
     }
-
-    io.emit('fired', (state.getLaser(id)))
-   })
+  })
 
 	socket.emit("firstupdate", state.toJS())
 	setInterval(()=>io.emit('update', state.toJS()), RENDER_INTERVAL)

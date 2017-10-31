@@ -33,7 +33,6 @@ class Test extends Component {
       fontFamily: 'Calibri',
       fill: "black"
     })
-
   }
 
   getRandomInt(min, max){
@@ -45,7 +44,6 @@ class Test extends Component {
   }
 
   mapGen(){
-
 		this.mapLayer = new Konva.Layer();
     this.topTenLayer = new Konva.Layer();
 
@@ -85,7 +83,6 @@ class Test extends Component {
     this.circleMap.on("mousedown", () => {
       this.socket.emit("shoot", (this.socket.id))
     })
-
 	}
 
   getRandomInt(min, max){
@@ -106,8 +103,12 @@ class Test extends Component {
 
     this.mapGen()
 
-    this.socket.on('connect', ()=>{
+    //***********************
+    // creating input/output handshake connection for communication with server
+    // connection initiated in componentDidMount
+    //***********************
 
+    this.socket.on('connect', ()=>{
 
       this.socket.on("firstupdate", (newData) => {
         this.fiend.localID = this.socket.id
@@ -146,30 +147,23 @@ class Test extends Component {
       })
 
       this.socket.on('removePlayer', (playerObj) => {
-        if(playerObj){
           if(playerObj.id === this.socket.id){
             this.props.history.push('/')
           }
           this.fiend.destroyLaser( this.fiend.gameData.lasers[playerObj.id])
           this.fiend.removePlayer(playerObj)
           this.fiend.destroyPlayer(playerObj)
-
-        }
-
       })
 
       this.socket.on('fired', (laserData) => {
         this.fiend.drawLaser(this.stage, laserData)
       })
-
     })
-
   }
 
   //  ***********************************
   //  Render GUI
   //  ***********************************
-
 
   render(){
     return(
